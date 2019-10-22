@@ -1,29 +1,28 @@
 /* 
  * AFTER RUNNING PROJECT WITH COMMAND: 
  * `gradle build && java -Dserver.port=0080 -jar build/libs/gs-spring-boot-0.1.0.jar`
- * CALL PERSEPHONY NUMBER ASSOCIATED WITH THIS Persephony App (CONFIGURED IN PERSEPHONY DASHBOARD)
+ * CALL FreeClimb NUMBER ASSOCIATED WITH THIS FreeClimb App (CONFIGURED IN FreeClimb DASHBOARD)
  * EXPECT TO RECEIVE MESSAGE REPEATEDLY:
  * "Thank you for waiting. Press any key to exit queue."
  * PRESS ANY KEY & EXPECT TO RECEIVE MESSAGE:
  * "Call exited queue."
- * 
 */
 
 package main.java.inbound_call_queue;
 
-import com.vailsys.persephony.api.PersyClient;
-import com.vailsys.persephony.api.PersyException;
-import com.vailsys.persephony.api.call.CallStatus;
-import com.vailsys.persephony.api.queue.Queue;
-import com.vailsys.persephony.api.queue.QueueCreateOptions;
+import com.vailsys.freeclimb.api.FreeClimbClient;
+import com.vailsys.freeclimb.api.FreeClimbException;
+import com.vailsys.freeclimb.api.call.CallStatus;
+import com.vailsys.freeclimb.api.queue.Queue;
+import com.vailsys.freeclimb.api.queue.QueueCreateOptions;
 
-import com.vailsys.persephony.percl.PerCLScript;
-import com.vailsys.persephony.percl.Say;
-import com.vailsys.persephony.percl.Language;
-import com.vailsys.persephony.percl.Pause;
-import com.vailsys.persephony.percl.Enqueue;
+import com.vailsys.freeclimb.percl.PerCLScript;
+import com.vailsys.freeclimb.percl.Say;
+import com.vailsys.freeclimb.percl.Language;
+import com.vailsys.freeclimb.percl.Pause;
+import com.vailsys.freeclimb.percl.Enqueue;
 
-import com.vailsys.persephony.webhooks.application.ApplicationVoiceCallback;
+import com.vailsys.freeclimb.webhooks.application.ApplicationVoiceCallback;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vailsys.persephony.webhooks.queue.QueueWaitCallback;
-import com.vailsys.persephony.webhooks.percl.GetDigitsActionCallback;
-import com.vailsys.persephony.percl.GetDigits;
-import com.vailsys.persephony.percl.GetDigitsNestable;
-import com.vailsys.persephony.percl.Hangup;
-import com.vailsys.persephony.percl.Dequeue;
-import com.vailsys.persephony.webhooks.queue.QueueActionCallback;
+import com.vailsys.freeclimb.webhooks.queue.QueueWaitCallback;
+import com.vailsys.freeclimb.webhooks.percl.GetDigitsActionCallback;
+import com.vailsys.freeclimb.percl.GetDigits;
+import com.vailsys.freeclimb.percl.GetDigitsNestable;
+import com.vailsys.freeclimb.percl.Hangup;
+import com.vailsys.freeclimb.percl.Dequeue;
+import com.vailsys.freeclimb.webhooks.queue.QueueActionCallback;
 
 import java.util.LinkedList;
 
@@ -51,9 +50,9 @@ public class InboundCallQueueController {
   private String accountId = System.getenv("ACCOUNT_ID");
   private String authToken = System.getenv("AUTH_TOKEN");
 
-  // To properly communicate with Persephony's API, set your Persephony app's
+  // To properly communicate with FreeClimb's API, set your FreeClimb app's
   // VoiceURL endpoint to '{yourApplicationURL}/InboundCall' for this example
-  // Your Persephony app can be configured in the Persephony Dashboard
+  // Your FreeClimb app can be configured in the FreeClimb Dashboard
   @RequestMapping(value = {
       "/InboundCall" }, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
   public ResponseEntity<?> inboundCall(@RequestBody String request) {
@@ -61,8 +60,8 @@ public class InboundCallQueueController {
     PerCLScript script = new PerCLScript();
 
     try {
-      // Create a PersyClient object
-      PersyClient client = new PersyClient(accountId, authToken);
+      // Create a FreeClimbClient object
+      FreeClimbClient client = new FreeClimbClient(accountId, authToken);
 
       if (request != null) {
         // Convert the JSON into a request object
@@ -97,7 +96,7 @@ public class InboundCallQueueController {
           script.add(enqueue);
         }
       }
-    } catch (PersyException pe) {
+    } catch (FreeClimbException pe) {
       System.out.println(pe.getMessage());
     }
 
@@ -134,7 +133,7 @@ public class InboundCallQueueController {
 
         // Add PerCL getdigits script to PerCL container
         script.add(digits);
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
@@ -177,7 +176,7 @@ public class InboundCallQueueController {
           // Add PerCL getdgitis script to PerCL container
           script.add(digits);
         }
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
@@ -206,7 +205,7 @@ public class InboundCallQueueController {
 
         // Create and add PerCL hangup script to PerCL container
         script.add(new Hangup());
-      } catch (PersyException pe) {
+      } catch (FreeClimbException pe) {
         System.out.println(pe.getMessage());
       }
     }
