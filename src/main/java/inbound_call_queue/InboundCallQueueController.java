@@ -45,10 +45,10 @@ import java.util.LinkedList;
 
 @RestController
 public class InboundCallQueueController {
-  // Get base URL, accountID, and authToken from environment variables
+  // Get base URL, accountID, and apiKey from environment variables
   private String baseUrl = System.getenv("HOST");
   private String accountId = System.getenv("ACCOUNT_ID");
-  private String authToken = System.getenv("AUTH_TOKEN");
+  private String apiKey = System.getenv("API_KEY");
 
   // To properly communicate with FreeClimb's API, set your FreeClimb app's
   // VoiceURL endpoint to '{yourApplicationURL}/InboundCall' for this example
@@ -61,7 +61,7 @@ public class InboundCallQueueController {
 
     try {
       // Create a FreeClimbClient object
-      FreeClimbClient client = new FreeClimbClient(accountId, authToken);
+      FreeClimbClient client = new FreeClimbClient(accountId, apiKey);
 
       if (request != null) {
         // Convert the JSON into a request object
